@@ -1,14 +1,27 @@
+'use strict';
+
+/**
+ * Main router.
+ * Aggregates all sub-routers and exposes the health check endpoint.
+ */
+
 const express = require('express');
 const healthController = require('../controllers/health');
+const notesRouter = require('./notes');
+const tagsRouter  = require('./tags');
 
 const router = express.Router();
-// Health endpoint
+
+// ---------------------------------------------------------------------------
+// Health check
+// ---------------------------------------------------------------------------
 
 /**
  * @swagger
  * /:
  *   get:
  *     summary: Health endpoint
+ *     tags: [Health]
  *     responses:
  *       200:
  *         description: Service health check passed
@@ -31,5 +44,11 @@ const router = express.Router();
  *                   example: development
  */
 router.get('/', healthController.check.bind(healthController));
+
+// ---------------------------------------------------------------------------
+// Feature routers
+// ---------------------------------------------------------------------------
+router.use('/notes', notesRouter);
+router.use('/tags',  tagsRouter);
 
 module.exports = router;
