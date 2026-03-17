@@ -10,11 +10,20 @@ const Database = require('better-sqlite3');
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '../../.env') });
 
-// Resolve the SQLite file path from environment or fall back to a local default.
+// Resolve the SQLite file path.
+// Priority: SQLITE_DB env var (set in .env and injected by the platform) ->
+//           absolute fallback computed relative to this file's location.
+// The fallback assumes the standard workspace layout:
+//   <workspace-root>/simple-notes-manager-333248-333262/notes_backend/src/services/db.js
+//   <workspace-root>/simple-notes-manager-333248-333264/database/myapp.db
 const dbPath = process.env.SQLITE_DB ||
-  path.join(
-    __dirname,
-    '../../../../simple-notes-manager-333248-333264/database/myapp.db'
+  path.resolve(
+    __dirname,          // …/notes_backend/src/services
+    '..', '..', '..', // up to simple-notes-manager-333248-333262
+    '..', '..', '..', // up to the workspace root (code-generation)
+    'simple-notes-manager-333248-333264',
+    'database',
+    'myapp.db'
   );
 
 let db;
